@@ -1,126 +1,50 @@
 let grid;
-let scrore = 0;
-let highScore = 0;
+let grid_new;
+let score = 0;
+let highscore = 0;
 
 function setup() {
-    createCanvas(400, 400);
+    createCanvas(620, 620);
+    if (highscore !== undefined && highscore !== "" && highscore !== null) {
+        select("#highscore").html(highscore);
+    } else {
+        highscore = 0;
+        select("#highscore").html(highscore);
+    }
+
     noLoop();
     grid = blankGrid();
+    grid_new = blankGrid();
     addNumber();
     addNumber();
     updateCanvas();
 }
 
-function updateCanvas() {
-    background(220);
-    drawGrid();
-    select("#score").html(scrore);
-}
-
-function isGameWon() {
-    for (let i = 0; i < 4; i++) {
-        for (let j = 0; j < 4; j++) {
-            if (grid[i][j] == 2048) {
-                return true;
-            }
-        }
-    }
-    return false;
-}
-
-function isGameOver() {
-    for (let i = 0; i < 4; i++) {
-        for (let j = 0; j < 4; j++) {
-            if (grid[i][j] == 0) {
-                return false;
-            }
-            if (i !== 3 && grid[i][j] === grid[i + 1][j]) {
-                return false;
-            }
-            if (j !== 3 && grid[i][j] === grid[i][j + 1]) {
-                return false;
-            }
-        }
-    }
-    return true;
-}
-
-function blankGrid() {
-    return [
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-    ];
-}
-
-function copyGrid(grid) {
-    let extra = blankGrid();
-    for (let i = 0; i < 4; i++) {
-        for (let j = 0; j < 4; j++) {
-            extra[i][j] = grid[i][j];
-        }
-    }
-    return extra;
-}
-
-function flipGrid(grid) {
-    for (let i = 0; i < 4; i++) {
-        grid[i].reverse();
-    }
-    return grid;
-}
-
-function rotateGrid(grid) {
-    let newGrid = blankGrid();
-
-    for (let i = 0; i < 4; i++) {
-        for (let j = 0; j < 4; j++) {
-            newGrid[i][j] = grid[j][i];
-        }
-    }
-    return newGrid;
-}
-
-function compare(a, b) {
-    for (let i = 0; i < 4; i++) {
-        for (let j = 0; j < 4; j++) {
-            if (a[i][j] !== b[i][j]) {
-                return true;
-            }
-        }
-    }
-    return false;
-}
-
+// One "move"
 function keyPressed() {
     let flipped = false;
     let rotated = false;
     let played = true;
     switch (keyCode) {
         case DOWN_ARROW:
+            // do nothing
             break;
         case UP_ARROW:
             grid = flipGrid(grid);
             flipped = true;
-
             break;
         case RIGHT_ARROW:
-            grid = rotateGrid(grid);
+            grid = transposeGrid(grid);
             rotated = true;
-
             break;
         case LEFT_ARROW:
-            grid = rotateGrid(grid);
+            grid = transposeGrid(grid);
             grid = flipGrid(grid);
             rotated = true;
             flipped = true;
-
             break;
-
         default:
             played = false;
-            break;
     }
 
     if (played) {
@@ -129,88 +53,76 @@ function keyPressed() {
             grid[i] = operate(grid[i]);
         }
         let changed = compare(past, grid);
-
         if (flipped) {
             grid = flipGrid(grid);
         }
-
         if (rotated) {
-            grid = rotateGrid(grid);
-            grid = rotateGrid(grid);
-            grid = rotateGrid(grid);
+            grid = transposeGrid(grid);
         }
-
         if (changed) {
             addNumber();
         }
-
         updateCanvas();
 
         let gameover = isGameOver();
         if (gameover) {
+            if (score > highscore) {
+                highscore = score;
+                select("#highscore").html(highscore);
+            }
             console.log("GAME OVER");
         }
-    }
-}
 
-function operate(row) {
-    row = slide(row);
-    row = combine(row);
-    row = slide(row);
-    return row;
-}
+        let gamewon = isGameWon();
+        if (gamewon) {
+            console.log("GAME WON");
+        }
 
-function addNumber() {
-    let options = [];
-    for (let i = 0; i < 4; i++) {
-        for (let j = 0; j < 4; j++) {
-            if (grid[i][j] === 0) {
-                options.push({
-                    x: i,
-                    y: j,
-                });
-            }
+        if (score > highscore) {
+            highscore = score;
+            select("#highscore").html(highscore);
         }
     }
-
-    if (options.length > 0) {
-        let spot = random(options);
-        let r = random(1);
-        grid[spot.x][spot.y] = r > 0.5 ? 2 : 4;
-    }
 }
 
-function slide(row) {
-    let arr = row.filter((val) => val);
-    let missing = 4 - arr.length;
-    let zeros = Array(missing).fill(0);
-    arr = zeros.concat(arr);
-    return arr;
-}
-
-function combine(row) {
-    for (let i = 3; i >= 1; i--) {
-        let a = row[i];
-        let b = row[i - 1];
-        if (a == b) {
-            row[i] = a + b;
-            scrore += row[i];
-            row[i - 1] = 0;
-        }
-    }
-    return row;
+function updateCanvas() {
+    background(color("#91887E"));
+    drawGrid();
+    select("#score").html(score);
 }
 
 function drawGrid() {
-    let w = 100;
+    let w = 150;
     for (let i = 0; i < 4; i++) {
         for (let j = 0; j < 4; j++) {
-            rect(i * w, j * w, w, w);
-            if (grid[i][j] !== 0) {
+            noFill();
+            //strokeWeight(2);
+            let val = grid[i][j];
+            let s = val.toString();
+            if (grid_new[i][j] === 1) {
+                //stroke(200, 200);
+                strokeWeight(16);
+                grid_new[i][j] = 0;
+            } else {
+                strokeWeight(0);
+                stroke(0);
+            }
+
+            if (val != 0) {
+                strokeWeight(0);
+                stroke(0);
+                fill(colorsSizes[s].color);
+            } else {
+                color;
+                fill(color("rgba(238, 228, 218, 0.35)"));
+            }
+            rect(i * w + 7 + 10, j * w + 7 + 10, w - 14, w - 14, 10);
+            if (val !== 0) {
                 textAlign(CENTER, CENTER);
-                let fs = map(grid[i][j], 2, 2048, 64, 16);
-                textSize(64);
-                text(grid[i][j], i * w + w / 2, j * w + w / 2);
+                noStroke();
+                fill(0);
+                textSize(colorsSizes[s].size);
+                text(val, i * w + w / 2 + 10, j * w + w / 2 + 14);
             }
         }
     }

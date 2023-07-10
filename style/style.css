@@ -42,4 +42,39 @@ body {
 canvas {
     margin-left: auto;
     margin-right: auto;
+    border-radius: 10px;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    -ms-border-radius: 10px;
+    -o-border-radius: 10px;
+}
+
+.scores {
+    width: 620px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+p {
+    color: var(--color-font);
+    width: 9em;
+    font-size: 22pt;
+    font-weight: 500;
+    margin-bottom: 1rem;
+    display: block;
+    text-align: center;
+    background: #bbada0;
+    color: #000;
+    padding: 15px 15px;
+    border-radius: 5px;
+}
+
+p:nth-child(1)::before {
+    content: "Score: ";
+}
+
+p:nth-child(2)::before {
+    content: "Highscore: ";
 }
