@@ -31,6 +31,24 @@ function copyGrid(grid) {
     return extra;
 }
 
+function flipGrid(grid) {
+    for (let i = 0; i < 4; i++) {
+        grid[i].reverse();
+    }
+    return grid;
+}
+
+function rotateGrid(grid) {
+    let newGrid = blankGrid();
+
+    for (let i = 0; i < 4; i++) {
+        for (let j = 0; j < 4; j++) {
+            newGrid[i][j] = grid[j][i];
+        }
+    }
+    return newGrid;
+}
+
 function compare(a, b) {
     for (let i = 0; i < 4; i++) {
         for (let j = 0; j < 4; j++) {
@@ -43,12 +61,60 @@ function compare(a, b) {
 }
 
 function keyPressed() {
-    if (key === " ") {
+    let flipped = false;
+    let rotated = false;
+    let played = true;
+    console.log(keyCode);
+    switch (keyCode) {
+        case DOWN_ARROW:
+            console.log("down");
+            break;
+        case UP_ARROW:
+            console.log("up");
+
+            grid = flipGrid(grid);
+            flipped = true;
+
+            break;
+        case RIGHT_ARROW:
+            console.log("right");
+
+            grid = rotateGrid(grid);
+            rotated = true;
+
+            break;
+        case LEFT_ARROW:
+            console.log("left");
+
+            grid = rotateGrid(grid);
+            grid = flipGrid(grid);
+            rotated = true;
+            flipped = true;
+
+            break;
+
+        default:
+            played = false;
+            break;
+    }
+
+    if (played) {
         let past = copyGrid(grid);
         for (let i = 0; i < 4; i++) {
             grid[i] = operate(grid[i]);
         }
         let changed = compare(past, grid);
+
+        if (flipped) {
+            grid = flipGrid(grid);
+        }
+
+        if (rotated) {
+            grid = rotateGrid(grid);
+            grid = rotateGrid(grid);
+            grid = rotateGrid(grid);
+        }
+
         if (changed) {
             addNumber();
         }
