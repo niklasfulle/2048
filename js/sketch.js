@@ -1,15 +1,48 @@
 let grid;
+let scrore = 0;
+let highScore = 0;
 
 function setup() {
     createCanvas(400, 400);
+    noLoop();
     grid = blankGrid();
     addNumber();
     addNumber();
+    updateCanvas();
 }
 
-function draw() {
+function updateCanvas() {
     background(220);
     drawGrid();
+    select("#score").html(scrore);
+}
+
+function isGameWon() {
+    for (let i = 0; i < 4; i++) {
+        for (let j = 0; j < 4; j++) {
+            if (grid[i][j] == 2048) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+function isGameOver() {
+    for (let i = 0; i < 4; i++) {
+        for (let j = 0; j < 4; j++) {
+            if (grid[i][j] == 0) {
+                return false;
+            }
+            if (i !== 3 && grid[i][j] === grid[i + 1][j]) {
+                return false;
+            }
+            if (j !== 3 && grid[i][j] === grid[i][j + 1]) {
+                return false;
+            }
+        }
+    }
+    return true;
 }
 
 function blankGrid() {
@@ -64,28 +97,20 @@ function keyPressed() {
     let flipped = false;
     let rotated = false;
     let played = true;
-    console.log(keyCode);
     switch (keyCode) {
         case DOWN_ARROW:
-            console.log("down");
             break;
         case UP_ARROW:
-            console.log("up");
-
             grid = flipGrid(grid);
             flipped = true;
 
             break;
         case RIGHT_ARROW:
-            console.log("right");
-
             grid = rotateGrid(grid);
             rotated = true;
 
             break;
         case LEFT_ARROW:
-            console.log("left");
-
             grid = rotateGrid(grid);
             grid = flipGrid(grid);
             rotated = true;
@@ -117,6 +142,13 @@ function keyPressed() {
 
         if (changed) {
             addNumber();
+        }
+
+        updateCanvas();
+
+        let gameover = isGameOver();
+        if (gameover) {
+            console.log("GAME OVER");
         }
     }
 }
@@ -162,6 +194,7 @@ function combine(row) {
         let b = row[i - 1];
         if (a == b) {
             row[i] = a + b;
+            scrore += row[i];
             row[i - 1] = 0;
         }
     }
@@ -175,6 +208,7 @@ function drawGrid() {
             rect(i * w, j * w, w, w);
             if (grid[i][j] !== 0) {
                 textAlign(CENTER, CENTER);
+                let fs = map(grid[i][j], 2, 2048, 64, 16);
                 textSize(64);
                 text(grid[i][j], i * w + w / 2, j * w + w / 2);
             }

@@ -36,11 +36,11 @@ let colorsSizes = {
         color: "#00000",
     },
     1024: {
-        size: 64,
+        size: 28,
         color: "#24FFC1",
     },
     2048: {
-        size: 64,
+        size: 28,
         color: "#A659A9",
     },
 };
