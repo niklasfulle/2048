@@ -57,3 +57,12 @@ function isGameOver() {
     }
     return true;
 }
+
+function newGame() {
+    document.getElementById("gameover").style.display = "none";
+    grid = blankGrid();
+    grid_new = blankGrid();
+    addNumber();
+    addNumber();
+    updateCanvas();
+}

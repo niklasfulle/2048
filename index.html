@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.3/p5.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.3/addons/p5.dom.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
         <link rel="stylesheet" type="text/css" href="style/style.css" />
         <link rel="shortcut icon" href="docs/icon/favicon.ico" type="image/x-icon" />
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -21,6 +20,11 @@
         <div class="scores">
             <p id="score"></p>
             <p id="highscore"></p>
+        </div>
+        <div class="placeholder"></div>
+        <div class="gameover" id="gameover">
+            <p>Game Over!</p>
+            <button id="restart" onclick="newGame()">Restart</button>
         </div>
     </body>
 </html>

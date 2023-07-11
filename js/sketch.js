@@ -5,6 +5,7 @@ let highscore = 0;
 
 function setup() {
     createCanvas(620, 620);
+    highscore = getItem("highscore");
     if (highscore !== undefined && highscore !== "" && highscore !== null) {
         select("#highscore").html(highscore);
     } else {
@@ -13,11 +14,7 @@ function setup() {
     }
 
     noLoop();
-    grid = blankGrid();
-    grid_new = blankGrid();
-    addNumber();
-    addNumber();
-    updateCanvas();
+    newGame();
 }
 
 // One "move"
@@ -68,9 +65,11 @@ function keyPressed() {
         if (gameover) {
             if (score > highscore) {
                 highscore = score;
+                storeItem("highscore", highscore);
+
                 select("#highscore").html(highscore);
             }
-            console.log("GAME OVER");
+            document.getElementById("gameover").style.display = "flex";
         }
 
         let gamewon = isGameWon();
@@ -80,6 +79,7 @@ function keyPressed() {
 
         if (score > highscore) {
             highscore = score;
+            storeItem("highscore", highscore);
             select("#highscore").html(highscore);
         }
     }
